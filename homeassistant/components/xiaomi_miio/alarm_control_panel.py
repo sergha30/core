@@ -7,12 +7,14 @@ from miio import DeviceException
 
 from homeassistant.components.alarm_control_panel import (
     SUPPORT_ALARM_ARM_AWAY,
+    SUPPORT_ALARM_TRIGGER,
     AlarmControlPanelEntity,
 )
 from homeassistant.const import (
     STATE_ALARM_ARMED_AWAY,
     STATE_ALARM_ARMING,
     STATE_ALARM_DISARMED,
+    STATE_ALARM_TRIGGERED,
 )
 
 from .const import DOMAIN
@@ -22,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 XIAOMI_STATE_ARMED_VALUE = "on"
 XIAOMI_STATE_DISARMED_VALUE = "off"
 XIAOMI_STATE_ARMING_VALUE = "oning"
-
+XIAOMI_STATE_TRIGGERED_VALUE = "alarming"
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Xiaomi Gateway Alarm from a config entry."""
@@ -137,6 +139,8 @@ class XiaomiGatewayAlarm(AlarmControlPanelEntity):
             self._state = STATE_ALARM_DISARMED
         elif state == XIAOMI_STATE_ARMING_VALUE:
             self._state = STATE_ALARM_ARMING
+        elif state == XIAOMI_STATE_TRIGGERED_VALUE:
+            self._state = STATE_ALARM_TRIGGERED
         else:
             _LOGGER.warning(
                 "New state (%s) doesn't match expected values: %s/%s/%s",
@@ -144,6 +148,7 @@ class XiaomiGatewayAlarm(AlarmControlPanelEntity):
                 XIAOMI_STATE_ARMED_VALUE,
                 XIAOMI_STATE_DISARMED_VALUE,
                 XIAOMI_STATE_ARMING_VALUE,
+                XIAOMI_STATE_TRIGGERED_VALUE
             )
             self._state = None
 
